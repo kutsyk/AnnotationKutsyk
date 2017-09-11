@@ -5,7 +5,7 @@ import java.lang.reflect.Field
 class GenericXmlApplicationContext(xmlFileLocation: String) {
 
     private companion object {
-        val CONFIG_FILE_NAME = GenericXmlApplicationContext::class.java.getResource("/GS_SpringXMLConfig.xml").path
+        val CONFIG_FILE_NAME = GenericXmlApplicationContext::class.java.getResource("/ExampleConfiguration.xml").path
     }
 
     private class ConfigurationException(e: String) : RuntimeException(e) {
@@ -99,12 +99,8 @@ class GenericXmlApplicationContext(xmlFileLocation: String) {
 
                 try {
                     currentField.isAccessible = true
-                    currentField.set(null, match!!.newInstance())
-                } catch (e: IllegalArgumentException) {
-                    e.printStackTrace()
-                } catch (e: IllegalAccessException) {
-                    e.printStackTrace()
-                } catch (e: InstantiationException) {
+                    currentField.set(null, match?.newInstance())
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
 
@@ -123,7 +119,7 @@ class GenericXmlApplicationContext(xmlFileLocation: String) {
         reader?.validating = validating
     }
 
-    fun setParserType(parserType: XmlBeanDefinitionReader.Companion.ParserTypes) {
+    fun setParserType(parserType: ParserTypes) {
         reader?.parserType = parserType
     }
 

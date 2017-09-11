@@ -9,7 +9,7 @@ interface IBeanFactory {
                     Pair("boolean", Pair(Boolean::class.javaPrimitiveType, Boolean::class.java)),
                     Pair("byte", Pair(Byte::class.javaPrimitiveType, Byte::class.java)),
                     Pair("short", Pair(Short::class.javaPrimitiveType, Short::class.java)),
-                    Pair("int", Pair(Int::class.javaPrimitiveType, Int::class.java)),
+                    Pair("int", Pair(Int::class.javaPrimitiveType, Integer::class.java)),
                     Pair("long", Pair(Long::class.javaPrimitiveType, Long::class.java)),
                     Pair("float", Pair(Float::class.javaPrimitiveType, Float::class.java)),
                     Pair("double", Pair(Double::class.javaPrimitiveType, Double::class.java)),

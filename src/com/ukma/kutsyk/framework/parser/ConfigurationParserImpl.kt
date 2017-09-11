@@ -12,7 +12,7 @@ class ConfigurationParserImpl(ConfigurationFile: String = "",
                               private val __InterceptorList: ArrayList<Bean> = arrayListOf<Bean>()) : ConfigurationParser {
 
     init {
-        if (Files.exists(Paths.get(ConfigurationFile))) {
+        if (Files.exists(Paths.get(ConfigurationFile.trimStart('/')))) {
             val jsoupDoc = Jsoup.parse(
                     File(ConfigurationFile).readText(),
                     "",

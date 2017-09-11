@@ -4,26 +4,24 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean id="greetingService" class="application.classes.GreetingServiceImpl">
+    <bean id="greetingService" class="com.ukma.kutsyk.domain.GreetingServiceImpl">
         <constructor-arg type="String" value="Hello World!" />
     </bean>
 
-    <bean id="bus" class="application.classes.Bus">
+    <bean id="bus" class="com.ukma.kutsyk.domain.Bus">
         <property name="message" value="Transport type is Bus" />
     </bean>
 
-    <bean id="bus2" class="application.classes.Bus"></bean>
+    <bean id="bus2" class="com.ukma.kutsyk.domain.Bus"></bean>
 
-    <bean id="car" class="application.classes.Car">
-        <constructor-arg value="Ferrari" />
+    <bean id="car" class="com.ukma.kutsyk.domain.Car">
+        <constructor-arg type="String" value="Ferrari" />
         <constructor-arg type="int" value="4" />
     </bean>
 
-    <interceptor id="interceptor1" class="application.classes.CapitalizingInterceptor"/>
+    <interceptor id="interceptor1" class="com.ukma.kutsyk.domain.CapitalizingInterceptor"/>
 
-    <interceptor id="interceptor2" class="application.classes.LowerCasingInterceptor"/>
-
-
+    <interceptor id="interceptor2" class="com.ukma.kutsyk.domain.LowerCasingInterceptor"/>
 
 
     <!--

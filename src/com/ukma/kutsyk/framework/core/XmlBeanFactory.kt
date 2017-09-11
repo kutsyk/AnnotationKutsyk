@@ -31,12 +31,15 @@ class XmlBeanFactory: IBeanFactory {
                         var i = 0
                         var j = 0
                         while (i < ca.size) {
-                            if (ca.get(i) == null || ca.get(i).contentEquals("String")) {
+                            if (ca.get(i).contentEquals("String")
+                                    || ca.get(i).isNullOrEmpty()) {
                                 consClasses[j] = String::class.java
                             } else if (classLibrary.containsKey(ca.get(i))) {
                                 consClasses[j] = primitiveClassForName(ca.get(i))
                             } else {
-                                consClasses[j] = Class.forName(ca.get(i))
+                                consClasses[j] = if (ca.get(i).isNotEmpty())
+                                    Class.forName(ca.get(i))
+                                else Class.forName("String")
                             }
                             j++
                             i += 2

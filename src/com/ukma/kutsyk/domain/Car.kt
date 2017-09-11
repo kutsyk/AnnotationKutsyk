@@ -1,16 +1,18 @@
 package com.ukma.kutsyk.domain
 
+import javax.print.attribute.IntegerSyntax
+
 class Car : Transport {
 
-    var name: String? = null
-    var wheelCount: Int? = null
+    var name: String? = ""
+    var wheelCount: Int? = 0
 
-    constructor(name: String, wheelCount: Int) {
+    constructor(name: String?, wheelCount: Int) {
         this.name = name
         this.wheelCount = wheelCount
     }
 
-    constructor(name: String, wheelCount: String) {
+    constructor(name: String?, wheelCount: String) {
         this.name = name
         this.wheelCount = Integer.decode(wheelCount)
     }
