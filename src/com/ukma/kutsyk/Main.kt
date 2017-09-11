@@ -22,12 +22,12 @@ class Main {
     private class ObjectInfo internal constructor(o: Any, name: String?) {
 
         private var name = "Anonymous"
-        private var className: String
-        private var superClassName: String
-        private var implementedInterfaces: Array<Class<*>>
-        private var fields: Array<Field>
-        private var constructors: Array<Constructor<*>>
-        private var methods: Array<Method>
+        private val className: String
+        private val superClassName: String
+        private val implementedInterfaces: Array<Class<*>>
+        private val fields: Array<Field>
+        private val constructors: Array<Constructor<*>>
+        private val methods: Array<Method>
 
         init {
             if (name != null && !name.isEmpty()) {
@@ -210,7 +210,7 @@ class Main {
         //(to prevent recompiling by Eclipse, switch Project > Build Automatically off)
         val output = "TeST InTercepTor"
         println("Unintercepted string: " + output)
-        System.out.println("Intercepted string: " + activeInterceptor!!.interceptOutputString(output))
+        System.out.println("Intercepted string: " + activeInterceptor?.interceptOutputString(output))
 
         //This block is needed for being able to inspect currently loaded classes
         //with tools like Java VisualVM
