@@ -17,7 +17,7 @@ class Main {
 
     //@Autowiring("java.lang.String") /* <- throws 'Class specified in annotation is not compatible' exception*/
     @Autowiring("com.ukma.kutsyk.domain.LowerCasingInterceptor")
-    private var activeInterceptor: Interceptor? = null
+    var activeInterceptor: Interceptor? = null
 
     private class ObjectInfo internal constructor(o: Any, name: String?) {
 

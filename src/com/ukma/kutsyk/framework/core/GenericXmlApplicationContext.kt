@@ -64,7 +64,7 @@ class GenericXmlApplicationContext(xmlFileLocation: String) {
                 val currentFieldClass = currentField.type
                 var match: Class<*>? = null
 
-                if (!currentField.getAnnotation(Autowiring::class.java).value.isEmpty()) {
+                if (currentField.getAnnotation(Autowiring::class.java).value.isNotEmpty()) {
                     var classInAnnotation: Class<*>? = null
                     try {
                         classInAnnotation = Class.forName(currentField.getAnnotation(Autowiring::class.java)
