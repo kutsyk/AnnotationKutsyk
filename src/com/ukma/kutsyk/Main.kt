@@ -1,9 +1,14 @@
 package com.ukma.kutsyk
 
 import com.ukma.kutsyk.domain.*
+import com.ukma.kutsyk.domain.language.English
+import com.ukma.kutsyk.domain.language.French
+import com.ukma.kutsyk.domain.language.Language
+import com.ukma.kutsyk.domain.transport.Bus
+import com.ukma.kutsyk.domain.transport.Car
+import com.ukma.kutsyk.domain.transport.Transport
 import com.ukma.kutsyk.framework.core.Autowiring
 import com.ukma.kutsyk.framework.core.GenericXmlApplicationContext
-import com.ukma.kutsyk.framework.core.GenericXmlApplicationContextJava
 import com.ukma.kutsyk.framework.core.ParserTypes
 import java.io.IOException
 import java.lang.reflect.Constructor
@@ -13,11 +18,13 @@ import java.lang.reflect.Modifier
 
 class Main {
 
-    private val context = GenericXmlApplicationContext(Main::class.java)
+    companion object {
+        private val context = GenericXmlApplicationContext(Main::class.java)
 
-    //@Autowiring("java.lang.String") /* <- throws 'Class specified in annotation is not compatible' exception*/
-    @Autowiring("com.ukma.kutsyk.domain.LowerCasingInterceptor")
-    var activeInterceptor: Interceptor? = null
+        //@Autowiring("java.lang.String") /* <- throws 'Class specified in annotation is not compatible' exception*/
+        @Autowiring("com.ukma.kutsyk.domain.LowerCasingInterceptor")
+        var activeInterceptor: Interceptor? = null
+    }
 
     private class ObjectInfo internal constructor(o: Any, name: String?) {
 
@@ -144,13 +151,6 @@ class Main {
                     objectInfo.append("synchronized ")
                 }
 
-                //In order to get formal method parameters names via reflection, they must be present in .class file.
-                //By default Java compiler discards this information,
-                //so you'll get arg0, arg1... instead of real informative names.
-                //In order to have the method parameters names included in the .class files,
-                //you must compile .java files with -parameters compile option.
-                //To do this in Eclipse, go to Window > Preferences > Java > Compiler and
-                //check the box 'Store information about method parameters (usable via reflection)'
                 objectInfo.append(m.returnType.simpleName + " " + m.name + "(")
                 if (m.parameterCount > 0) {
                     for (p in m.parameters) {
@@ -212,14 +212,18 @@ class Main {
         println("Unintercepted string: " + output)
         System.out.println("Intercepted string: " + activeInterceptor?.interceptOutputString(output))
 
+        // Mmy classes test
+        val lang1 = factory?.bean("language_1", Language::class.java) as English
+        lang1.sayHello()
+
+        val lang2 = factory?.bean("language_2", Language::class.java) as French
+        lang2.sayHello()
+        println()
+        
         //This block is needed for being able to inspect currently loaded classes
         //with tools like Java VisualVM
         println("Press any key to exit...")
-        try {
-            System.`in`.read()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+        readLine()
     }
 }
 

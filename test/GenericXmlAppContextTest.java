@@ -1,7 +1,7 @@
 
 import static org.junit.Assert.*;
 
-import com.ukma.kutsyk.domain.Bus;
+import com.ukma.kutsyk.domain.transport.Bus;
 import com.ukma.kutsyk.framework.core.GenericXmlApplicationContext;
 import com.ukma.kutsyk.framework.core.ParserTypes;
 import org.junit.Test;

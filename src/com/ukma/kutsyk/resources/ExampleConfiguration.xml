@@ -8,13 +8,13 @@
         <constructor-arg type="String" value="Hello World!" />
     </bean>
 
-    <bean id="bus" class="com.ukma.kutsyk.domain.Bus">
+    <bean id="bus" class="com.ukma.kutsyk.domain.transport.Bus">
         <property name="message" value="Transport type is Bus" />
     </bean>
 
-    <bean id="bus2" class="com.ukma.kutsyk.domain.Bus"></bean>
+    <bean id="bus2" class="com.ukma.kutsyk.domain.transport.Bus"></bean>
 
-    <bean id="car" class="com.ukma.kutsyk.domain.Car">
+    <bean id="car" class="com.ukma.kutsyk.domain.transport.Car">
         <constructor-arg type="String" value="Ferrari" />
         <constructor-arg type="int" value="4" />
     </bean>
@@ -23,15 +23,11 @@
 
     <interceptor id="interceptor2" class="com.ukma.kutsyk.domain.LowerCasingInterceptor"/>
 
-
-    <!--
-    <bean id="..." class="...">
-      <constructor-arg ref="..." />
-      <property name="..." value="..." />
-      <property name="..." ref="..." />
+    <bean id="language_1" class="com.ukma.kutsyk.domain.language.English">
+        <property name="propertyForExample" value="example property for English" />
     </bean>
-    -->
 
-    <!-- more bean definitions go here -->
+    <bean id="language_2" class="com.ukma.kutsyk.domain.language.French">
+    </bean>
 
 </beans>

@@ -1,6 +1,4 @@
-package com.ukma.kutsyk.domain
-
-import javax.print.attribute.IntegerSyntax
+package com.ukma.kutsyk.domain.transport
 
 class Car : Transport {
 
