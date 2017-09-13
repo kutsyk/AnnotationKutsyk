@@ -5,7 +5,7 @@ import java.lang.reflect.Field
 class GenericXmlApplicationContext(xmlFileLocation: String) {
 
     private companion object {
-        val CONFIG_FILE_NAME = GenericXmlApplicationContext::class.java.getResource("/ExampleConfiguration.xml").path
+        val CONFIG_FILE_NAME = GenericXmlApplicationContext::class.java.getResource("/Practice_1_conf.xml").path
     }
 
     private class ConfigurationException(e: String) : RuntimeException(e) {
@@ -18,7 +18,7 @@ class GenericXmlApplicationContext(xmlFileLocation: String) {
             !testClass!!.isInterface() && classToInstantiate.isAssignableFrom(testClass)
 
     private fun isTheSameClassAs(anotherClass: Class<*>, testClass: Class<*>?) =
-        anotherClass.name == testClass?.name
+            anotherClass.name == testClass?.name
 
     private var reader: XmlBeanDefinitionReader? = null
     private var beanFactory: IBeanFactory? = null
@@ -29,24 +29,31 @@ class GenericXmlApplicationContext(xmlFileLocation: String) {
 
     private var xmlFileLocation: String? = null
 
-    constructor(): this(CONFIG_FILE_NAME) {
+    constructor() : this(CONFIG_FILE_NAME) {
     }
 
-    constructor(classObject: Class<*>): this(CONFIG_FILE_NAME) {
+    constructor(classObject: Class<*>) : this(CONFIG_FILE_NAME)
+    {
+        ProcessFields(classObject)
+        ProcessMethods(classObject)
+    }
+
+    private fun ProcessFields(classObject: Class<*>)
+    {
         val fields = classObject.declaredFields
         for (currentField in fields) {
             if (currentField.isAnnotationPresent(Autowiring::class.java)) {
                 val myCL = Thread.currentThread().contextClassLoader
                 var classLoaderClassesField: Field? = null
                 var myCLClass: Class<*> = myCL.javaClass
+
                 while (myCLClass != java.lang.ClassLoader::class.java) {
                     myCLClass = myCLClass.superclass
                 }
+
                 try {
                     classLoaderClassesField = myCLClass.getDeclaredField("classes")
-                } catch (e: NoSuchFieldException) {
-                    e.printStackTrace()
-                } catch (e: SecurityException) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
 
@@ -55,9 +62,7 @@ class GenericXmlApplicationContext(xmlFileLocation: String) {
                 var classes: List<Class<*>>? = null
                 try {
                     classes = classLoaderClassesField.get(myCL) as List<Class<*>>
-                } catch (e: IllegalArgumentException) {
-                    e.printStackTrace()
-                } catch (e: IllegalAccessException) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
 
@@ -81,17 +86,17 @@ class GenericXmlApplicationContext(xmlFileLocation: String) {
                     }
 
                 } else {
-                    if (!classes!!.any { it -> canInstantiate(currentFieldClass, it) })
-                    {
+                    if (!classes!!.any { it -> canInstantiate(currentFieldClass, it) }) {
                         throw ConfigurationException("No suitable implementation for "
                                 + currentFieldClass.name + " found. Please check your configuration file.")
                     }
 
-                    match = classes!!.filter{ it -> canInstantiate(currentFieldClass, it) }.first()
+                    match = classes!!.filter { it -> canInstantiate(currentFieldClass, it) }.first()
 
-                    if (classes!!.any{ it ->
+                    if (classes!!.any { it ->
                         canInstantiate(currentFieldClass, it)
-                                && !isTheSameClassAs(match!!, it)}) {
+                                && !isTheSameClassAs(match!!, it)
+                    }) {
                         throw ConfigurationException("Ambiguous configuration for "
                                 + currentFieldClass.name + ". Please check your configuration file.")
                     }
@@ -103,13 +108,20 @@ class GenericXmlApplicationContext(xmlFileLocation: String) {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-
             }
         }
     }
 
-    init
+    private fun ProcessMethods(classObject: Class<*>)
     {
+        val methods = classObject.declaredMethods
+//        for (currentMethod in methods) {
+//            if (currentMethod.isAnnotationPresent(Required::class.java)) {
+//            }
+//        }
+    }
+
+    init {
         this.xmlFileLocation = xmlFileLocation
         reader = XmlBeanDefinitionReader()
         beanFactory = XmlBeanFactory(this.xmlFileLocation!!, reader!!)

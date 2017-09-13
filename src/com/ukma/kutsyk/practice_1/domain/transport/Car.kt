@@ -1,4 +1,4 @@
-package com.ukma.kutsyk.domain.transport
+package com.ukma.kutsyk.practice_1.domain.transport
 
 class Car : Transport {
 
@@ -23,6 +23,6 @@ class Car : Transport {
     }
 
     override fun transport() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        println("I am the car")
     }
 }

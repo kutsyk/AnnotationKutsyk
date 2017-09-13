@@ -1,4 +1,4 @@
-package com.ukma.kutsyk.domain;
+package com.ukma.kutsyk.practice_1.domain;
 
 public interface GreetingService {
     public String getMessage();

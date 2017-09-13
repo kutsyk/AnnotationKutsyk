@@ -1,4 +1,4 @@
-package com.ukma.kutsyk.domain.language
+package com.ukma.kutsyk.practice_1.domain.language
 
 class English: Language {
 

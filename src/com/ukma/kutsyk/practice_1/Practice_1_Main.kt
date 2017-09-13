@@ -1,16 +1,15 @@
-package com.ukma.kutsyk
+package com.ukma.kutsyk.practice_1
 
-import com.ukma.kutsyk.domain.*
-import com.ukma.kutsyk.domain.language.English
-import com.ukma.kutsyk.domain.language.French
-import com.ukma.kutsyk.domain.language.Language
-import com.ukma.kutsyk.domain.transport.Bus
-import com.ukma.kutsyk.domain.transport.Car
-import com.ukma.kutsyk.domain.transport.Transport
+import com.ukma.kutsyk.practice_1.domain.*
+import com.ukma.kutsyk.practice_1.domain.language.English
+import com.ukma.kutsyk.practice_1.domain.language.French
+import com.ukma.kutsyk.practice_1.domain.language.Language
+import com.ukma.kutsyk.practice_1.domain.transport.Bus
+import com.ukma.kutsyk.practice_1.domain.transport.Car
+import com.ukma.kutsyk.practice_1.domain.transport.Transport
 import com.ukma.kutsyk.framework.core.Autowiring
 import com.ukma.kutsyk.framework.core.GenericXmlApplicationContext
 import com.ukma.kutsyk.framework.core.ParserTypes
-import java.io.IOException
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -21,8 +20,7 @@ class Main {
     companion object {
         private val context = GenericXmlApplicationContext(Main::class.java)
 
-        //@Autowiring("java.lang.String") /* <- throws 'Class specified in annotation is not compatible' exception*/
-        @Autowiring("com.ukma.kutsyk.domain.LowerCasingInterceptor")
+        @Autowiring("com.ukma.kutsyk.practice_1.domain.LowerCasingInterceptor")
         var activeInterceptor: Interceptor? = null
     }
 
@@ -174,14 +172,14 @@ class Main {
     }
 
     fun main(args: Array<String>) {
-        context.load(Main::class.java!!.getResource("/ExampleConfiguration.xml").getPath())
+        context.load(Main::class.java!!.getResource("/Practice_1_conf.xml").getPath())
         context.setValidating(true)
         context.setParserType(ParserTypes.SAX)
 
         val factory = context.getBeanFactory()
 
         val greetingService = factory?.bean("greetingService", GreetingService::class.java) as GreetingService
-        System.out.println(greetingService.getMessage())
+        println(greetingService.getMessage())
 
         val bus = factory?.bean("bus", Transport::class.java) as Bus
         bus.transport()
@@ -190,11 +188,8 @@ class Main {
         bus2.transport()
 
         val car = factory?.bean("car", Transport::class.java) as Car
-        System.out.println(car.toString())
+        println(car.toString())
 
-        //================
-        //================ REFLECTION API DEMO
-        //================
         println()
         println("================ REFLECTION API DEMO ================")
         println()
@@ -204,24 +199,18 @@ class Main {
         println(ObjectInfo(bus.toString(),
                 "String representation of the 'bus' object").toString())
 
-        //================
-        //================ CUSTOM INTERCEPTOR AUTOWIRING THROUGH ANNOTATION DEMO
-        //================
-        //(to prevent recompiling by Eclipse, switch Project > Build Automatically off)
         val output = "TeST InTercepTor"
         println("Unintercepted string: " + output)
-        System.out.println("Intercepted string: " + activeInterceptor?.interceptOutputString(output))
+        println("Intercepted string: " + activeInterceptor?.interceptOutputString(output))
 
-        // Mmy classes test
+        // My classes test
         val lang1 = factory?.bean("language_1", Language::class.java) as English
         lang1.sayHello()
 
         val lang2 = factory?.bean("language_2", Language::class.java) as French
         lang2.sayHello()
         println()
-        
-        //This block is needed for being able to inspect currently loaded classes
-        //with tools like Java VisualVM
+
         println("Press any key to exit...")
         readLine()
     }

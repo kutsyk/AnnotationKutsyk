@@ -1,4 +1,4 @@
-package com.ukma.kutsyk.domain.transport
+package com.ukma.kutsyk.practice_1.domain.transport
 
 class Bus : Transport {
     var message: String = ""
