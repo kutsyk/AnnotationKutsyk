@@ -17,11 +17,11 @@ class ConfigurationParserImpl(ConfigurationFile: String = "",
                 xmlBean.children().select(ConfigurationConstants.PROPERTY).flatMap
                 { properties ->
                     listOf(
-//                            Property(
-                                    properties.attr(ConfigurationConstants.ATTRIBUTES.NAME) ?: "",
-                                    properties.attr(ConfigurationConstants.ATTRIBUTES.VALUE) ?: ""
-//                                    properties.attr(ConfigurationConstants.ATTRIBUTES.REF) ?: ""
-//                            )
+                            Property(
+                                    name = properties.attr(ConfigurationConstants.ATTRIBUTES.NAME) ?: "",
+                                    value = properties.attr(ConfigurationConstants.ATTRIBUTES.VALUE) ?: "",
+                                    ref = properties.attr(ConfigurationConstants.ATTRIBUTES.REF) ?: ""
+                            )
                     )
                 }
         )

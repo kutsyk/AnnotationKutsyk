@@ -23,7 +23,6 @@ class XmlBeanFactory: IBeanFactory {
                 val obj: Any
 
                 val ca = b.constructorArg
-
                 if (!ca.isEmpty()) {
                     val consClasses = arrayOfNulls<Class<*>>(ca.size / 2)
 
@@ -64,19 +63,10 @@ class XmlBeanFactory: IBeanFactory {
                     obj = ctor.newInstance()
                 }
 
-                val props = b.properties
-
-                if (!props.isEmpty()) {
-                    var i = 0
-                    while (i < props.size) {
-                        val first = Character.toUpperCase(props.get(i).get(0))
-                        val methodName = "set" + first + props.get(i).substring(1)
-                        val method = obj.javaClass.getMethod(methodName,
-                                *arrayOf(props.get(i + 1).javaClass))
-                        method.invoke(obj, props.get(i + 1))
-                        i++
-                        i++
-                    }
+                b.properties.forEach { prop ->
+                    val methodName = "set${prop.name.capitalize()}"
+                    val method = obj.javaClass.getMethod(methodName, prop.value.javaClass)
+                    method.invoke(obj, prop.value)
                 }
 
                 beanTable.put(b.name, obj)
