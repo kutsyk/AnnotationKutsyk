@@ -2,6 +2,7 @@ package com.ukma.kutsyk.framework.parser
 
 import com.ukma.kutsyk.framework.ConfigurationConstants
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
 import java.io.File
 import java.nio.file.Files
@@ -10,6 +11,27 @@ import java.nio.file.Paths
 class ConfigurationParserImpl(ConfigurationFile: String = "",
                               private val __ResultList: ArrayList<Bean> = arrayListOf<Bean>(),
                               private val __InterceptorList: ArrayList<Bean> = arrayListOf<Bean>()) : ConfigurationParser {
+
+    private fun addPropertiesToBean(xmlBean: Element, tmpBean: Bean) =
+        tmpBean.properties.addAll(
+                xmlBean.children().select(ConfigurationConstants.PROPERTY).flatMap
+                { properties ->
+                    listOf(
+//                            Property(
+                                    properties.attr(ConfigurationConstants.ATTRIBUTES.NAME) ?: "",
+                                    properties.attr(ConfigurationConstants.ATTRIBUTES.VALUE) ?: ""
+//                                    properties.attr(ConfigurationConstants.ATTRIBUTES.REF) ?: ""
+//                            )
+                    )
+                }
+        )
+
+    private fun addConstructorArgumentsToBean(xmlBean: Element, tmpBean: Bean) =
+            xmlBean.children().select(ConfigurationConstants.CONSTRUCTOR_ARGS).forEach { consArgs ->
+                tmpBean.constructorArg.add(consArgs.attr(ConfigurationConstants.ATTRIBUTES.TYPE))
+                tmpBean.constructorArg.add(consArgs.attr(ConfigurationConstants.ATTRIBUTES.VALUE))
+            }
+
 
     init {
         if (Files.exists(Paths.get(ConfigurationFile.trimStart('/')))) {
@@ -24,20 +46,8 @@ class ConfigurationParserImpl(ConfigurationFile: String = "",
                         tmpBean.name = xmlBean.attr(ConfigurationConstants.ATTRIBUTES.ID)
                         tmpBean.className = xmlBean.attr(ConfigurationConstants.ATTRIBUTES.CLASS)
 
-                        xmlBean.children().select(ConfigurationConstants.CONSTRUCTOR_ARGS).forEach { consArgs ->
-                            tmpBean.constructorArg.add(consArgs.attr(ConfigurationConstants.ATTRIBUTES.TYPE))
-                            tmpBean.constructorArg.add(consArgs.attr(ConfigurationConstants.ATTRIBUTES.VALUE))
-                        }
-
-                        tmpBean.properties.addAll(
-                                xmlBean.children().select(ConfigurationConstants.PROPERTY).flatMap
-                                { properties ->
-                                    listOf(
-                                            properties.attr(ConfigurationConstants.ATTRIBUTES.NAME),
-                                            properties.attr(ConfigurationConstants.ATTRIBUTES.VALUE)
-                                    )
-                                }
-                        )
+                        addConstructorArgumentsToBean(xmlBean, tmpBean)
+                        addPropertiesToBean(xmlBean, tmpBean)
                         __ResultList.add(tmpBean)
                     }
 
@@ -48,20 +58,8 @@ class ConfigurationParserImpl(ConfigurationFile: String = "",
                         tmpBean.name = xmlBean.attr(ConfigurationConstants.ATTRIBUTES.ID)
                         tmpBean.className = xmlBean.attr(ConfigurationConstants.ATTRIBUTES.CLASS)
 
-                        xmlBean.children().select(ConfigurationConstants.CONSTRUCTOR_ARGS).forEach { consArgs ->
-                            tmpBean.constructorArg.add(consArgs.attr(ConfigurationConstants.ATTRIBUTES.TYPE))
-                            tmpBean.constructorArg.add(consArgs.attr(ConfigurationConstants.ATTRIBUTES.VALUE))
-                        }
-
-                        tmpBean.properties.addAll(
-                                xmlBean.children().select(ConfigurationConstants.PROPERTY).flatMap
-                                { properties ->
-                                    listOf(
-                                            properties.attr(ConfigurationConstants.ATTRIBUTES.NAME),
-                                            properties.attr(ConfigurationConstants.ATTRIBUTES.VALUE)
-                                    )
-                                }
-                        )
+                        addConstructorArgumentsToBean(xmlBean, tmpBean)
+                        addPropertiesToBean(xmlBean, tmpBean)
                         __InterceptorList.add(tmpBean)
                     }
         }

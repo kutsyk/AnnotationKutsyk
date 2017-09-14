@@ -115,10 +115,75 @@ class GenericXmlApplicationContext(xmlFileLocation: String) {
     private fun ProcessMethods(classObject: Class<*>)
     {
         val methods = classObject.declaredMethods
-//        for (currentMethod in methods) {
-//            if (currentMethod.isAnnotationPresent(Required::class.java)) {
-//            }
-//        }
+        for (currentMethod in methods) {
+            if (currentMethod.isAnnotationPresent(Required::class.java)) {
+                val myCL = Thread.currentThread().contextClassLoader
+                var classLoaderClassesField: Field? = null
+                var myCLClass: Class<*> = myCL.javaClass
+
+                while (myCLClass != java.lang.ClassLoader::class.java) {
+                    myCLClass = myCLClass.superclass
+                }
+
+                try {
+                    classLoaderClassesField = myCLClass.getDeclaredField("classes")
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+                classLoaderClassesField!!.isAccessible = true
+
+                var classes: List<Class<*>>? = null
+                try {
+                    classes = classLoaderClassesField.get(myCL) as List<Class<*>>
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+             /*   val currentFieldClass = currentField.type
+                var match: Class<*>? = null
+
+                if (currentField.getAnnotation(Autowiring::class.java).value.isNotEmpty()) {
+                    var classInAnnotation: Class<*>? = null
+                    try {
+                        classInAnnotation = Class.forName(currentField.getAnnotation(Autowiring::class.java)
+                                .value)
+                    } catch (e: ClassNotFoundException) {
+                        e.printStackTrace()
+                    }
+
+                    if (canInstantiate(currentFieldClass, classInAnnotation)) {
+                        match = classInAnnotation
+                    } else {
+                        throw ConfigurationException("Class specified in annotation is not compatible with "
+                                + currentFieldClass.name + ".")
+                    }
+
+                } else {
+                    if (!classes!!.any { it -> canInstantiate(currentFieldClass, it) }) {
+                        throw ConfigurationException("No suitable implementation for "
+                                + currentFieldClass.name + " found. Please check your configuration file.")
+                    }
+
+                    match = classes!!.filter { it -> canInstantiate(currentFieldClass, it) }.first()
+
+                    if (classes!!.any { it ->
+                        canInstantiate(currentFieldClass, it)
+                                && !isTheSameClassAs(match!!, it)
+                    }) {
+                        throw ConfigurationException("Ambiguous configuration for "
+                                + currentFieldClass.name + ". Please check your configuration file.")
+                    }
+                }
+
+                try {
+                    currentField.isAccessible = true
+                    currentField.set(null, match?.newInstance())
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }*/
+            }
+        }
     }
 
     init {

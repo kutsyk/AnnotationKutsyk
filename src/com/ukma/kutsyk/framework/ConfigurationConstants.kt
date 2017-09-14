@@ -8,6 +8,7 @@ object ConfigurationConstants
         val CLASS = "class"
         val TYPE = "type"
         val VALUE = "value"
+        val REF = "ref"
         val NAME = "name"
     }
     val BEAN = "bean"

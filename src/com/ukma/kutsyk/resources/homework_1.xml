@@ -4,5 +4,14 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+    <bean id="client" class="com.ukma.kutsyk.homework_1.injection.domain.Client">
+        <constructor-arg type="String" value="client" />
+    </bean>
+    <bean id="product" class="com.ukma.kutsyk.homework_1.injection.domain.Product">
+        <constructor-arg type="String" value="test product" />
+    </bean>
 
+    <bean id="order" class="com.ukma.kutsyk.homework_1.injection.domain.OrderRequiered">
+        <property name="client" ref="client"/>
+    </bean>
 </beans>
