@@ -86,7 +86,7 @@ class GenericXmlApplicationContext(xmlFileLocation: String) {
                     }
 
                 } else {
-                    if (!classes!!.any { it -> canInstantiate(currentFieldClass, it) }) {
+                    if (classes!!.none { it -> canInstantiate(currentFieldClass, it) }) {
                         throw ConfigurationException("No suitable implementation for "
                                 + currentFieldClass.name + " found. Please check your configuration file.")
                     }

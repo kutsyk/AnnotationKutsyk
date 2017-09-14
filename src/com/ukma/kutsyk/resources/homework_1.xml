@@ -13,5 +13,6 @@
 
     <bean id="order" class="com.ukma.kutsyk.homework_1.injection.domain.OrderRequiered">
         <property name="client" ref="client"/>
+        <property name="product" ref="product"/>
     </bean>
 </beans>

@@ -16,4 +16,12 @@ class OrderRequiered
     fun setClient(cl: Client) {
         this.client = cl
     }
+
+    fun getProduct() = this.product
+
+    fun getClient() = this.client
+
+    override fun toString(): String {
+        return "OrderRequiered(client=$client, product=$product)"
+    }
 }

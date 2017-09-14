@@ -1,6 +1,8 @@
 package com.ukma.kutsyk.framework.core
 
+import com.ukma.kutsyk.framework.exceptions.BeanInitializationException
 import com.ukma.kutsyk.framework.parser.Bean
+import com.ukma.kutsyk.homework_1.injection.domain.Client
 import java.lang.reflect.Constructor
 import java.util.HashMap
 
@@ -61,9 +63,37 @@ class XmlBeanFactory(xmlFilePath: String, xbdr: XmlBeanDefinitionReader) : IBean
 
                 bean.properties.forEach { prop ->
                     val methodName = "set${prop.name.capitalize()}"
-                    val method = obj.javaClass.getMethod(methodName, prop.value.javaClass)
-                    method.invoke(obj, prop.value)
+                    if (prop.value.isNotEmpty())
+                    {
+                        val method = obj.javaClass.getMethod(methodName, prop.value.javaClass)
+                        method.invoke(obj, prop.value)
+                    }
+                    else
+                    {
+                        val beanRef = beanTable.get(prop.ref)
+                        val beanClass = if (beanRef == null)
+                            throw BeanInitializationException()
+                        else
+                            beanRef.javaClass
+                        val method = obj.javaClass.getMethod(methodName, beanClass)
+                        method.invoke(obj, beanRef)
+                    }
                 }
+
+                //Check Require annotation
+                obj.javaClass.methods.forEach { method ->
+                    if (method.isAnnotationPresent(Required::class.java))
+                    {
+                        if (method.name.contains("set"))
+                        {
+                            val propertyName = method.name.replace("set", "")
+                            val propertyValue = obj.javaClass.getMethod("get${propertyName}").invoke(obj)
+                            if (propertyValue == null)
+                                throw BeanInitializationException("Class ${obj.javaClass.name} missing property ${propertyName}")
+                        }
+                    }
+                }
+
                 beanTable.put(bean.name, obj)
             } catch (ex: Exception) {
                 ex.printStackTrace()
