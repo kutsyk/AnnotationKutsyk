@@ -4,76 +4,70 @@ import com.ukma.kutsyk.framework.parser.Bean
 import java.lang.reflect.Constructor
 import java.util.HashMap
 
-class XmlBeanFactory: IBeanFactory {
-    
+class XmlBeanFactory(xmlFilePath: String, xbdr: XmlBeanDefinitionReader) : IBeanFactory {
+
     internal var beanTable = HashMap<String, Any>()
     internal var interceptorTable = HashMap<String, Any>()
 
-    constructor(xmlFilePath: String, xbdr: XmlBeanDefinitionReader) {
-        xbdr.loadBeanDefinitions(xmlFilePath)
-        generateBeans(xbdr.beanList!!)
-        setupInterceptors(xbdr.interceptorList!!)
-    }
-
     private fun generateBeans(beanList: List<Bean>) {
-        for (b in beanList) {
+        beanList.forEach { bean ->
             try {
-                val clazz = Class.forName(b.className)
-                val ctor: Constructor<*>
+                val clazz = Class.forName(bean.className)
+                val constructor: Constructor<*>
                 val obj: Any
+                val constArgs = bean.constructorArg
 
-                val ca = b.constructorArg
-                if (!ca.isEmpty()) {
-                    val consClasses = arrayOfNulls<Class<*>>(ca.size / 2)
-
-                    run {
-                        var i = 0
-                        var j = 0
-                        while (i < ca.size) {
-                            if (ca.get(i).contentEquals("String")
-                                    || ca.get(i).isNullOrEmpty()) {
-                                consClasses[j] = String::class.java
-                            } else if (classLibrary.containsKey(ca.get(i))) {
-                                consClasses[j] = primitiveClassForName(ca.get(i))
-                            } else {
-                                consClasses[j] = if (ca.get(i).isNotEmpty())
-                                    Class.forName(ca.get(i))
-                                else Class.forName("String")
-                            }
-                            j++
-                            i += 2
-                        }
-                    }
-                    ctor = clazz.getConstructor(*consClasses)
-                    val consArgs = arrayOfNulls<Any>(consClasses.size)
-                    var i = 1
+                if (constArgs.isNotEmpty())
+                {
+                    val consClasses = arrayOfNulls<Class<*>>(constArgs.size / 2)
                     var j = 0
-                    while (i < ca.size) {
-                        if (consClasses[j]!!.isPrimitive()) {
-                            consArgs[j] = wrapperClassValueForPrimitiveType(consClasses[j]!!, ca.get(i))
-                        } else {
-                            consArgs[j] = consClasses[j]!!.cast(ca.get(i))
-                        }
+                    for (i in 0 until constArgs.size step 2) {
+                        consClasses[j] =
+                                if (constArgs[i].contentEquals("String")
+                                        || constArgs[i].isEmpty()) {
+                                    String::class.java
+                                } else if (classLibrary.containsKey(constArgs[i])) {
+                                    primitiveClassForName(constArgs[i])
+                                } else {
+                                    Class.forName(constArgs[i])
+                                }
                         j++
-                        i += 2
                     }
-                    obj = ctor.newInstance(*consArgs)
-                } else {
-                    ctor = clazz.getConstructor()
-                    obj = ctor.newInstance()
+
+                    constructor = clazz.getConstructor(*consClasses)
+
+                    val conArgs = arrayOfNulls<Any>(consClasses.size)
+                    j = 0
+                    for (i in 1 until constArgs.size step 2) {
+                        conArgs[j] =
+                                if (consClasses[j]!!.isPrimitive)
+                                {
+                                    wrapperClassValueForPrimitiveType(consClasses[j]!!, constArgs[i])
+                                }
+                                else
+                                {
+                                    consClasses[j]!!.cast(constArgs[i])
+                                }
+                        j++
+                    }
+                    obj = constructor.newInstance(*conArgs)
+
+                }
+                else
+                {
+                    constructor = clazz.getConstructor()
+                    obj = constructor.newInstance()
                 }
 
-                b.properties.forEach { prop ->
+                bean.properties.forEach { prop ->
                     val methodName = "set${prop.name.capitalize()}"
                     val method = obj.javaClass.getMethod(methodName, prop.value.javaClass)
                     method.invoke(obj, prop.value)
                 }
-
-                beanTable.put(b.name, obj)
+                beanTable.put(bean.name, obj)
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
-
         }
     }
 
@@ -90,12 +84,20 @@ class XmlBeanFactory: IBeanFactory {
         }
     }
 
+    init {
+        xbdr.loadBeanDefinitions(xmlFilePath)
+        generateBeans(xbdr.beanList!!)
+        setupInterceptors(xbdr.interceptorList!!)
+    }
+
     override fun bean(string: String): Any =
-        beanTable[string]!!
+            beanTable[string]!!
 
     override fun <T> bean(string: String, type: Class<T>): T =
-        beanTable[string] as T
+            beanTable[string] as T
 
     override fun interceptors(): Array<Any> =
             interceptorTable.values.toTypedArray()
+
+
 }
